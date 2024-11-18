@@ -184,11 +184,6 @@ class CobraVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by CobraParser#expression.
-    def visitExpression(self, ctx:CobraParser.ExpressionContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by CobraParser#controlStructure.
     def visitControlStructure(self, ctx:CobraParser.ControlStructureContext):
         return self.visitChildren(ctx)
@@ -219,6 +214,16 @@ class CobraVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by CobraParser#condition_block.
+    def visitCondition_block(self, ctx:CobraParser.Condition_blockContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by CobraParser#parameter.
+    def visitParameter(self, ctx:CobraParser.ParameterContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by CobraParser#mlTraining.
     def visitMlTraining(self, ctx:CobraParser.MlTrainingContext):
         return self.visitChildren(ctx)
@@ -226,6 +231,11 @@ class CobraVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by CobraParser#snaketronTraining.
     def visitSnaketronTraining(self, ctx:CobraParser.SnaketronTrainingContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by CobraParser#stat_block.
+    def visitStat_block(self, ctx:CobraParser.Stat_blockContext):
         return self.visitChildren(ctx)
 
 

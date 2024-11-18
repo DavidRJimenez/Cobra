@@ -2,8 +2,6 @@
 # Defines structures used by Cobra
 ##
 
-import inspect
-import sys
 
 ##
 # Class CobraVariable__
@@ -11,195 +9,213 @@ import sys
 ##
 
 
-class CobraVariable__():
-  def __init__(self, name, value=None, kind='any', params={}):
-    self.name = name
-    self.kind = kind
-    self.value = value
-    self.params = params
+class CobraVariable__:
+    def __init__(self, name, value=None, kind="any", params={}):
+        self.name = name
+        self.kind = kind
+        self.value = value
+        self.params = params
 
-    try:
-      value._visitor = CobraVariable__._visitor
-      value._memory_manager = CobraVariable__._memory_manager
-    except:
-      pass
+        try:
+            value._visitor = CobraVariable__._visitor
+            value._memory_manager = CobraVariable__._memory_manager
+        except:
+            pass
 
-  def __eq__(self, other):
-    if isinstance(other, str):
-      return self.name == other
-    else:
-      return isinstance(other, CobraVariable__) and self.name == other.name
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return self.name == other
+        else:
+            return isinstance(other, CobraVariable__) and self.name == other.name
 
-  def __str__(self):
-    return "| NAME: " + self.name + " - VALUE: " + str(self.value) + ' - KIND: ' + str(self.kind) + ' |'
+    def __str__(self):
+        return (
+            "| NAME: "
+            + self.name
+            + " - VALUE: "
+            + str(self.value)
+            + " - KIND: "
+            + str(self.kind)
+            + " |"
+        )
 
-  def set_value(self, value):
-    self.value = value
+    def set_value(self, value):
+        self.value = value
+
 
 ##
 # Class CobraParameter__
 # Defines class CobraParameter__ to manage parameters in functions
 ##
 
-class CobraParameter__:
-  def __init__(self, name, kind=None, mandatory=False, default=None):
-    self.name = name
-    self.kind = kind
-    self.mandatory = mandatory
-    self.default = default
 
-  def is_mandatory(self):
-    return self.mandatory == True
+class CobraParameter__:
+    def __init__(self, name, kind=None, mandatory=False, default=None):
+        self.name = name
+        self.kind = kind
+        self.mandatory = mandatory
+        self.default = default
+
+    def is_mandatory(self):
+        return self.mandatory == True
+
 
 ##
 # Class CobraLocalMemory__
 # Defines class CobraLocalMemory__ to manage local variables in functions
 ##
 
-class CobraLocalMemory__():
 
-  def __init__(self, name, depth, variables={}):
-    self.name = name
-    self.depth = depth
-    self.variables = {}
+class CobraLocalMemory__:
 
-    if isinstance(variables, dict):
-      for (name, var) in variables.items():
-        if isinstance(var, CobraVariable__):
-          self.variables[name] = var
-        else:
-          self.variables[name] = CobraVariable__(name, var, 'any')
+    def __init__(self, name, depth, variables={}):
+        self.name = name
+        self.depth = depth
+        self.variables = {}
 
-  def find(self, name):
-    portions = name.split('.')
-    current_portion = 0
-    result = None
-    current = self.variables
+        if isinstance(variables, dict):
+            for name, var in variables.items():
+                if isinstance(var, CobraVariable__):
+                    self.variables[name] = var
+                else:
+                    self.variables[name] = CobraVariable__(name, var, "any")
 
-    for portion in portions:
-      current_portion += 1
+    def find(self, name):
+        portions = name.split(".")
+        current_portion = 0
+        result = None
+        current = self.variables
 
-      # Is the last portion
-      if current_portion == len(portions):
+        for portion in portions:
+            current_portion += 1
 
-        if isinstance(current, dict):
-          result = current.get(portions[-1])
-        elif isinstance(current, CobraVariable__):
-          if isinstance(current.value, dict):
-            result = current.value.get(portions[-1])
-          else:
-            try:
-              result = CobraVariable__(portion, getattr(current.value, portion))
-            except Exception as e:
-              raise Exception('Error: Variable not found.')
-        else:
-          try:
-            result = CobraVariable__(portion, getattr(current, portion))
-          except Exception as e:
-            raise Exception('Error: Variable not found.')
-      else:
-        if isinstance(current, dict):
-          nxt = current.get(portion, False)
-          if nxt:
-            current = nxt
-          else:
-            raise Exception('Error: Variable not found.')
-        elif isinstance(current, CobraVariable__):
-          if isinstance(current.value, dict):
-            nxt = current.value.get(portion, False)
-            if nxt:
-              current = nxt
+            # Is the last portion
+            if current_portion == len(portions):
+
+                if isinstance(current, dict):
+                    result = current.get(portions[-1])
+                elif isinstance(current, CobraVariable__):
+                    if isinstance(current.value, dict):
+                        result = current.value.get(portions[-1])
+                    else:
+                        try:
+                            result = CobraVariable__(
+                                portion, getattr(current.value, portion)
+                            )
+                        except Exception:
+                            raise Exception("Error: Variable not found.")
+                else:
+                    try:
+                        result = CobraVariable__(portion, getattr(current, portion))
+                    except Exception:
+                        raise Exception("Error: Variable not found.")
             else:
-              raise Exception('Error: Variable not found.')
-          else:
-            try:
-              current = CobraVariable__(portion, getattr(current.value, portion))
-            except Exception as e:
-              raise Exception('Error: Variable not found.')
+                if isinstance(current, dict):
+                    nxt = current.get(portion, False)
+                    if nxt:
+                        current = nxt
+                    else:
+                        raise Exception("Error: Variable not found.")
+                elif isinstance(current, CobraVariable__):
+                    if isinstance(current.value, dict):
+                        nxt = current.value.get(portion, False)
+                        if nxt:
+                            current = nxt
+                        else:
+                            raise Exception("Error: Variable not found.")
+                    else:
+                        try:
+                            current = CobraVariable__(
+                                portion, getattr(current.value, portion)
+                            )
+                        except Exception:
+                            raise Exception("Error: Variable not found.")
+                else:
+                    # Special type of variable
+                    raise Exception("Error: Variable not found.")
+
+        return result
+
+    def assign(self, name, obj):
+        var = self.find(name)
+
+        if var is None:
+            if isinstance(obj, CobraVariable__):
+                self.variables[name] = obj
+            else:
+                self.variables[name] = CobraVariable__(name, obj, "default")
         else:
-          # Special type of variable
-          raise Exception('Error: Variable not found.')
+            var.set_value(obj)
 
-    return result
+    def getVariables(self):
+        return self.variables
 
-  def assign(self, name, obj):
-    var = self.find(name)
-
-    if var is None:
-      if isinstance(obj, CobraVariable__):
-        self.variables[name] = obj
-      else:
-        self.variables[name] = CobraVariable__(name, obj, 'default')
-    else:
-      var.set_value(obj)
-
-  def getVariables(self):
-    return self.variables
 
 ##
 # Class __GlobalMemory__
 # Defines class __GlobalMemory__ to manage local memories
 ##
 
-class CobraGlobalMemory__():
 
-  memory_stack = None
+class CobraGlobalMemory__:
 
-  def __init__(self, local_memories=[]):
-    self.memory_stack = []
+    memory_stack = None
 
-    main_memory = CobraLocalMemory__('Main', 0)
-    self.memory_stack.append(main_memory)
+    def __init__(self, local_memories=[]):
+        self.memory_stack = []
 
-  def find(self, name):
-    result = None
+        main_memory = CobraLocalMemory__("Main", 0)
+        self.memory_stack.append(main_memory)
 
-    for memory in reversed(self.memory_stack):
-      try:
-        result = memory.find(name)
-      except Exception as e:
-        raise e
+    def find(self, name):
+        result = None
 
-      if result is not None:
-        break
+        for memory in reversed(self.memory_stack):
+            try:
+                result = memory.find(name)
+            except Exception as e:
+                raise e
 
-    return result
+            if result is not None:
+                break
 
-  def peek_memory(self):
-    return self.memory_stack[-1]
+        return result
 
-  def get_memory(self, index):
-    if index < 0 or index > len(self.memory_stack):
-      raise Exception('Memory IndexOutOfRange')
+    def peek_memory(self):
+        return self.memory_stack[-1]
 
-    return self.memory_stack[index]
+    def get_memory(self, index):
+        if index < 0 or index > len(self.memory_stack):
+            raise Exception("Memory IndexOutOfRange")
 
-  def assign(self, name, obj):
-    var = self.find(name)
+        return self.memory_stack[index]
 
-    if var is None:
-      if not isinstance(obj, CobraVariable__):
-        obj = CobraVariable__(name, obj, 'any')
+    def assign(self, name, obj):
+        var = self.find(name)
 
-      local_memory = self.peek_memory()
+        if var is None:
+            if not isinstance(obj, CobraVariable__):
+                obj = CobraVariable__(name, obj, "any")
 
-      local_memory.assign(name, obj)
-    else:
-      var.set_value(obj)
+            local_memory = self.peek_memory()
 
-    pass
+            local_memory.assign(name, obj)
+        else:
+            var.set_value(obj)
 
-  def add_memory(self, name, params={}):
-    if type(params) is not dict:
-      raise Exception('Error: typeof \'params\' is not dict')
+        pass
 
-    memory_depth = self.memory_stack[-1].depth + 1
+    def add_memory(self, name, params={}):
+        if type(params) is not dict:
+            raise Exception("Error: typeof 'params' is not dict")
 
-    local_memory = CobraLocalMemory__(name, memory_depth, params)
+        memory_depth = self.memory_stack[-1].depth + 1
 
-    self.memory_stack.append(local_memory)
+        local_memory = CobraLocalMemory__(name, memory_depth, params)
 
-    return local_memory
+        self.memory_stack.append(local_memory)
 
-  def pop_memory(self):
-    return self.memory_stack.pop()
+        return local_memory
+
+    def pop_memory(self):
+        return self.memory_stack.pop()

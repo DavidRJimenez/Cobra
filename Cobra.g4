@@ -35,8 +35,7 @@ expr:
 	| left = expr op = AND right = expr						# andExpr
 	| left = expr op = OR right = expr						# orExpr
 	| LPAREN expr RPAREN									# parenExpr
-	| atom                                                 # atomExpr
-    ;
+	| atom													# atomExpr;
 
 atom: (INT | FLOAT)	# numericAtom
 	| (YAY | NAY)	# booleanAtom
@@ -60,14 +59,13 @@ keyvalue: ID COLON expr;
 variable:
 	ID (POINT ID)* (LPAREN (expr (COMMA expr)*)? RPAREN)?
 	| ID (POINT ID)* RBRACKET expr LBRACKET;
-spit: SPIT expression;
+spit: SPIT LBRACE expr RBRACE NEWLINE;
 
 bite: BITE ID (POINT ID)* | FROM ID BITE ID;
-hiss: HISS LPAREN expression RPAREN;
+hiss: HISS LPAREN expr RPAREN;
 // Declaración de instrucciones
 statement:
 	assignment
-	| expression
 	| controlStructure
 	| functionDeclaration
 	| snaketronTraining
@@ -75,45 +73,47 @@ statement:
 	| fileHandling;
 
 // Asignación
-assignment: ID '=' expression;
-
-// Expresiones aritméticas básicas
-expression:
-	expression ('+' | '-' | '*' | '/') expression
-	| INT
-	| FLOAT
-	| ID
-	| '(' expression ')';
+assignment: variable ASSIGN (assignment | expr);
 
 // Estructuras de control (ejemplo de if y bucles)
 controlStructure: ifStatement | forLoop | whileLoop;
 
 ifStatement:
-	STRIKE LPAREN expression RPAREN LBRACE statement* RBRACE;
+	STRIKE condition_block (ELSTRIKE condition_block)* (ELSE stat_block);
 
 forLoop:
-	TRAIL LPAREN ID IN expression RPAREN LBRACE statement* RBRACE;
+	TRAIL ID IN expr stat_block;
 
 dataPlotting:
-	SLITHERPLOT LPAREN (ID | STRING | expression) RPAREN;
+	SLITHERPLOT LPAREN (ID | STRING | expr) RPAREN;
 
 whileLoop:
-	COIL LPAREN expression RPAREN LBRACE statement* RBRACE;
+	COIL expr stat_block;
 
 // Declaración de funciones
 functionDeclaration:
-	FANG ID LPAREN (ID (',' ID)*)? RPAREN LBRACE statement* RBRACE;
+	FANG ID LPAREN (parameter (COMMA parameter)*)? RPAREN LBRACE stat* RBRACE;
 
+condition_block
+ : expr NEWLINE? stat_block
+ ;
+
+parameter: ID (ASSIGN expr)?;
 // Instrucción de entrenamiento de un perceptrón
 mlTraining: LPAREN ID COMMA ID LPAREN LBRACE statement* RBRACE;
 
 snaketronTraining: TRAINSNAKETRON mlTraining;
 
+stat_block
+ : LBRACE (stat|NEWLINE)* RBRACE
+ | stat NEWLINE
+ ;
+
 makeNest: MAKENEST mlTraining;
 // Manejo de archivos
 fileHandling:
 	'read_file' '(' STRING ')' ';'
-	| 'write_file' '(' STRING ',' expression ')' ';';
+	| 'write_file' '(' STRING ',' expr ')' ';';
 
 // Tokens básicos
 
@@ -161,6 +161,9 @@ EQ: '==';
 NEQ: '!=';
 AND: 'and';
 OR: 'or';
+ASSIGN : '=';
+ELSTRIKE: 'elstrike';
+ELSE: 'else';
 
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
 INT: [0-9]+;

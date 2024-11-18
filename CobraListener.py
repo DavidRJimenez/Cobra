@@ -323,15 +323,6 @@ class CobraListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by CobraParser#expression.
-    def enterExpression(self, ctx:CobraParser.ExpressionContext):
-        pass
-
-    # Exit a parse tree produced by CobraParser#expression.
-    def exitExpression(self, ctx:CobraParser.ExpressionContext):
-        pass
-
-
     # Enter a parse tree produced by CobraParser#controlStructure.
     def enterControlStructure(self, ctx:CobraParser.ControlStructureContext):
         pass
@@ -386,6 +377,24 @@ class CobraListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by CobraParser#condition_block.
+    def enterCondition_block(self, ctx:CobraParser.Condition_blockContext):
+        pass
+
+    # Exit a parse tree produced by CobraParser#condition_block.
+    def exitCondition_block(self, ctx:CobraParser.Condition_blockContext):
+        pass
+
+
+    # Enter a parse tree produced by CobraParser#parameter.
+    def enterParameter(self, ctx:CobraParser.ParameterContext):
+        pass
+
+    # Exit a parse tree produced by CobraParser#parameter.
+    def exitParameter(self, ctx:CobraParser.ParameterContext):
+        pass
+
+
     # Enter a parse tree produced by CobraParser#mlTraining.
     def enterMlTraining(self, ctx:CobraParser.MlTrainingContext):
         pass
@@ -401,6 +410,15 @@ class CobraListener(ParseTreeListener):
 
     # Exit a parse tree produced by CobraParser#snaketronTraining.
     def exitSnaketronTraining(self, ctx:CobraParser.SnaketronTrainingContext):
+        pass
+
+
+    # Enter a parse tree produced by CobraParser#stat_block.
+    def enterStat_block(self, ctx:CobraParser.Stat_blockContext):
+        pass
+
+    # Exit a parse tree produced by CobraParser#stat_block.
+    def exitStat_block(self, ctx:CobraParser.Stat_blockContext):
         pass
 
 
