@@ -1,4 +1,4 @@
-// Generated from Cobra.g4 by ANTLR 4.13.2
+// Generated from /home/pissarello-dev/Documentos/Code/univerity/semestre-v/lpt/Cobra/Gramatica/Cobra.g4 by ANTLR 4.13.1
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
