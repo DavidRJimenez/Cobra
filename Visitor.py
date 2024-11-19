@@ -156,3 +156,14 @@ class Visitor(CobraVisitor):
         local_memory.assign(name, funcion, None)
 
         return funcion
+    
+
+    # aca va import q no l o he hecho
+
+    
+    def funcionRetornar(self, ctx: CobraParser.FuncionRetornarContext):
+        return self.visit(ctx.expr(),1)
+    
+    def visitCondition_block(self, ctx: CobraParser.Condition_blockContext):
+        result = { 'accepted': self.visit(ctx.expr()) }
+    
