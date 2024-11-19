@@ -43,7 +43,6 @@ atom: (INT | FLOAT)	# numericAtom
 	| scales		# arrayAtom
 	| snake			# objectAtom
 	| grabScale		# grabScaleAtom
-	| matrix_row	# matrixRowAtom
 	| variable		# accessVariableAtom
 	| SNAKENT		# nullAtom;
 // scales: | ID #arrayAtom | functionCall #functionCallAtom ;

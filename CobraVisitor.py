@@ -139,6 +139,11 @@ class CobraVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by CobraParser#matrix_row.
+    def visitMatrix_row(self, ctx:CobraParser.Matrix_rowContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by CobraParser#snake.
     def visitSnake(self, ctx:CobraParser.SnakeContext):
         return self.visitChildren(ctx)

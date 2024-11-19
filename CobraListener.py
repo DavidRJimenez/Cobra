@@ -242,6 +242,15 @@ class CobraListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by CobraParser#matrix_row.
+    def enterMatrix_row(self, ctx:CobraParser.Matrix_rowContext):
+        pass
+
+    # Exit a parse tree produced by CobraParser#matrix_row.
+    def exitMatrix_row(self, ctx:CobraParser.Matrix_rowContext):
+        pass
+
+
     # Enter a parse tree produced by CobraParser#snake.
     def enterSnake(self, ctx:CobraParser.SnakeContext):
         pass
