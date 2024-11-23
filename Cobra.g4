@@ -42,23 +42,17 @@ atom: (INT | FLOAT)	# numericAtom
 	| STRING		# stringAtom
 	| scales		# arrayAtom
 	| snake			# objectAtom
-	| grabScale		# grabScaleAtom
+	| grabScale		# grabScaleAtoms
 	| variable		# accessVariableAtom
 	| SNAKENT		# nullAtom;
 // scales: | ID #arrayAtom | functionCall #functionCallAtom ;
 
 scales:
-    // Matrices (listas anidadas)
-    LBRACKET (matrix_row (COMMA matrix_row)*)? RBRACKET
-    // Arreglos simples y slices
-    | LBRACKET (expr (COMMA expr)*)? RBRACKET
-    | LBRACKET start = expr COLON (step = expr COLON)? end = expr RBRACKET
+     LBRACKET (expr | scales) (COMMA (expr | scales))*? RBRACKET
+    | LBRACKET start=expr COLON (step=expr COLON)? end=expr RBRACKET
     ;
 
-matrix_row:
-    // Una fila de la matriz es un arreglo simple
-    LBRACKET (expr (COMMA expr)*)? RBRACKET
-    ;
+
 
 snake: LBRACE (keyvalue (COMMA keyvalue)*)? RBRACE;
 
@@ -173,8 +167,9 @@ OR: 'or';
 ASSIGN : '=';
 ELSTRIKE: 'elstrike';
 ELSE: 'else';
-MATRIX_ROW: 'matrix_row';
 
+
+// Tokens de expresiones atómicas
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
 INT: [0-9]+;
 FLOAT: [0-9]+ '.' [0-9]+;

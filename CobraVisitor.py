@@ -119,8 +119,8 @@ class CobraVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by CobraParser#grabScaleAtom.
-    def visitGrabScaleAtom(self, ctx:CobraParser.GrabScaleAtomContext):
+    # Visit a parse tree produced by CobraParser#grabScaleAtoms.
+    def visitGrabScaleAtoms(self, ctx:CobraParser.GrabScaleAtomsContext):
         return self.visitChildren(ctx)
 
 
@@ -136,11 +136,6 @@ class CobraVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by CobraParser#scales.
     def visitScales(self, ctx:CobraParser.ScalesContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by CobraParser#matrix_row.
-    def visitMatrix_row(self, ctx:CobraParser.Matrix_rowContext):
         return self.visitChildren(ctx)
 
 

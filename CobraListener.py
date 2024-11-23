@@ -206,12 +206,12 @@ class CobraListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by CobraParser#grabScaleAtom.
-    def enterGrabScaleAtom(self, ctx:CobraParser.GrabScaleAtomContext):
+    # Enter a parse tree produced by CobraParser#grabScaleAtoms.
+    def enterGrabScaleAtoms(self, ctx:CobraParser.GrabScaleAtomsContext):
         pass
 
-    # Exit a parse tree produced by CobraParser#grabScaleAtom.
-    def exitGrabScaleAtom(self, ctx:CobraParser.GrabScaleAtomContext):
+    # Exit a parse tree produced by CobraParser#grabScaleAtoms.
+    def exitGrabScaleAtoms(self, ctx:CobraParser.GrabScaleAtomsContext):
         pass
 
 
@@ -239,15 +239,6 @@ class CobraListener(ParseTreeListener):
 
     # Exit a parse tree produced by CobraParser#scales.
     def exitScales(self, ctx:CobraParser.ScalesContext):
-        pass
-
-
-    # Enter a parse tree produced by CobraParser#matrix_row.
-    def enterMatrix_row(self, ctx:CobraParser.Matrix_rowContext):
-        pass
-
-    # Exit a parse tree produced by CobraParser#matrix_row.
-    def exitMatrix_row(self, ctx:CobraParser.Matrix_rowContext):
         pass
 
 
