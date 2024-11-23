@@ -1,10 +1,10 @@
 __author__ = "MateoPissarello"
 
-from CobraVisitor import CobraVisitor
-from CobraParser import CobraParser
+from .CobraVisitor import CobraVisitor
+from .CobraParser import CobraParser
 from numpy import arange
 from importlib import import_module
-from structures import CobraVariable__, CobraGlobalMemory__, CobraParameter__
+from .structures import CobraVariable__, CobraGlobalMemory__, CobraParameter__
 
 
 class Visitor(CobraVisitor):
@@ -66,6 +66,15 @@ class Visitor(CobraVisitor):
         elif ctx.atom() is not None:
             return self.visit(ctx.atom())
         raise Exception("SpicySnake Error: Found " + str(self.OTHER()))
+
+    def visitHiss(self, ctx: CobraParser.HissContext):
+        variable = self.visit(ctx.expr())
+        if isinstance(variable, CobraVariable__):
+            print(variable.value)
+        else:
+            print(variable)
+
+        return None
 
     def visitAssignment(self, ctx: CobraParser.AssignmentContext):
         name = str(ctx.variable().getText())
@@ -158,79 +167,75 @@ class Visitor(CobraVisitor):
         local_memory.assign(name, funcion, None)
 
         return funcion
-    
-    def funcionImport(self, ctx: CobraParser.FuncionImportContext):
-        package_name = '.'.join([str(x.getText()) for x in ctx.ID()])
+
+    def funcionImport(self, ctx: CobraParser.BiteContext):
+        package_name = ".".join([str(x.getText()) for x in ctx.ID()])
         mod = import_module(package_name)
 
         global_mem = self.memory_manager.get_memory(0)
 
         for name, attribute in mod.__dict__.items():
-         if not name.startswith('__'):
-            var = CobraVariable__(name, attribute, 'default')
-            global_mem.assign(name, var)
+            if not name.startswith("__"):
+                var = CobraVariable__(name, attribute, "default")
+                global_mem.assign(name, var)
 
         return mod
 
+    def funcionRetornar(self, ctx: CobraParser.SpitContext):
+        return self.visit(ctx.expr(), 1)
 
-    def funcionRetornar(self, ctx: CobraParser.FuncionRetornarContext):
-        return self.visit(ctx.expr(),1)
-    
     def visitCondition_block(self, ctx: CobraParser.Condition_blockContext):
 
-        result = { 'accepted': self.visit(ctx.expr()) }
+        result = {"accepted": self.visit(ctx.expr())}
 
-        if result['accepted'] is True:
-         self.memory_manager.add_memory('STRIKE_STMT')
-         result['value_returned'] = self.visit(ctx.stat_block())
-         self.memory_manager.pop_memory()
+        if result["accepted"] is True:
+            self.memory_manager.add_memory("STRIKE_STMT")
+            result["value_returned"] = self.visit(ctx.stat_block())
+            self.memory_manager.pop_memory()
 
         return result
-    
-      # Visit a parse tree produced by TLONParser#stat_block.
+
+    # Visit a parse tree produced by TLONParser#stat_block.
     def visitStat_block(self, ctx: CobraParser.Stat_blockContext):
         value_returned = None
 
         for stat in ctx.stat():
-         value_returned = self.visit(stat)
+            value_returned = self.visit(stat)
 
         return value_returned
 
-
-    def visitArray(self, ctx: CobraParser.ArrayContext):
+    def visitArray(self, ctx: CobraParser.ScalesContext):
         array = []
 
-        if (len(ctx.POINTS()) > 0):
-          try:
-             init = self.visit(ctx.expr(0))
-             end = self.visit(ctx.expr(1)) + 1
-             step = 1
+        if len(ctx.POINTS()) > 0:
+            try:
+                init = self.visit(ctx.expr(0))
+                end = self.visit(ctx.expr(1)) + 1
+                step = 1
 
-             if ctx.step is not None:
-                step = self.visit(ctx.expr(1))
-                end = self.visit(ctx.expr(2)) + 1
+                if ctx.step is not None:
+                    step = self.visit(ctx.expr(1))
+                    end = self.visit(ctx.expr(2)) + 1
 
-             if type(init) is float or type(end) is float or type(step) is float:
-                init = float(init)
-                step = float(step)
-                end = float(end)
-             else:
-                init = int(init)
-                step = int(step)
-                end = int(end)
+                if type(init) is float or type(end) is float or type(step) is float:
+                    init = float(init)
+                    step = float(step)
+                    end = float(end)
+                else:
+                    init = int(init)
+                    step = int(step)
+                    end = int(end)
 
-             array = list(arange(init, end, step))
-          except Exception as e:
-             print (e)
-             raise Exception('Error: Variable types are not numeric.')
+                array = list(arange(init, end, step))
+            except Exception as e:
+                print(e)
+                raise Exception("Error: Variable types are not numeric.")
 
         else:
-         items = ctx.expr()
+            items = ctx.expr()
 
         for item in items:
             value = self.visit(item)
             array.append(value)
 
         return array
-    
-    
