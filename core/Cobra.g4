@@ -22,7 +22,7 @@ simple_stat:
 	| hiss // Imprimir
 	| bite // importar
 	| spit // return
-	| atom; // expresiones atómicas
+	| atom NEWLINE; // expresiones atómicas
 
 expr:
 	<assoc = right>left = expr POW right = expr				# powExpr
@@ -32,7 +32,7 @@ expr:
 	| left = expr op = (PLUS | MINUS) right = expr			# addSubExpr
 	| left = expr op = (LTEQ | GTEQ | LT | GT) right = expr	# relationalExpr
 	| left = expr op = (EQ | NEQ) right = expr				# equalityExpr
-	| left = expr op = AND right = expr						# andExpr
+	| left = expr op = AND right = expr						# andExprF
 	| left = expr op = OR right = expr						# orExpr
 	| LPAREN expr RPAREN									# parenExpr
 	| atom													# atomExpr;

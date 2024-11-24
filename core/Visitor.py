@@ -67,6 +67,32 @@ class Visitor(CobraVisitor):
             return self.visit(ctx.atom())
         raise Exception("SpicySnake Error: Found " + str(self.OTHER()))
 
+    def visitAtomExpr(self, ctx: CobraParser.AtomExprContext):
+        return self.visitChildren(ctx)
+
+    def visitAtom(self, ctx: CobraParser.AtomContext):
+        if ctx.NUMBER():
+            return float(ctx.NUMBER().getText())
+        elif ctx.ID():
+            return self.memory_manager.find(ctx.ID().getText())
+        elif ctx.STRING():
+            string = str(ctx.STRING().getText())
+            return string[1 : len(string) - 1]
+
+        raise Exception("SpicySnake Error: Unsupported atom type.")
+
+    def visitAccessVariable(self, ctx: CobraParser.AccessVariableAtomContext):
+        return self.visitChildren(ctx)
+
+    def visitNumericAtom(self, ctx: CobraParser.NumericAtomContext):
+        if ctx.INT() is not None:
+            return int(ctx.INT().getText())
+        return float(ctx.FLOAT().getText())
+
+    def visitVariable(self, ctx: CobraParser.VariableContext):
+        # TODO
+        ...
+
     def visitHiss(self, ctx: CobraParser.HissContext):
         variable = self.visit(ctx.expr())
         if isinstance(variable, CobraVariable__):
